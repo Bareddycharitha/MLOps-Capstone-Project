@@ -3,42 +3,59 @@ name: CI Pipeline
 on: push
 
 jobs:
-  project-testing:
-    runs-on: ubuntu-latest
+ project-testing:
+  runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+  steps:
+  - name: Checkout code
+    uses: actions/checkout@v3
 
-      - name: Setup python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.10'
+  - name: Setup Python
+    uses: actions/setup-python@v2
+    with:
+      python-version: "3.10"
 
-      - name: Cache pip dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+  - name: Cache pip dependencies
+    uses: actions/cache@v3
+    with:
+      path: ~/.cache/pip
+      key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+      restore-keys: |
+        ${{ runner.os }}-pip-
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install dvc
+  - name: Install dependencies
+    run: |
+      pip install -r requirements.txt
+      pip install dvc[s3]
 
-      - name: Pull data from DVC
-        run: dvc pull
+  - name: Configure AWS Credentials
+    uses: aws-actions/configure-aws-credentials@v2
+    with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Run DVC pipeline
-        run: dvc repro
+  - name: Pull data from DVC
+    run: dvc pull
 
-      - name: Run model tests
-        run: python -m unittest tests/test_model.py
+  - name: Run DVC pipeline
+    env:
+      CAPSTONE_TEST: ${{ secrets.CAPSTONE_TEST }}
+    run: dvc repro
 
-      - name: Promote model to production
-        if: success()
-        run: python scripts/promote_model.py
+  - name: Run model tests
+    env:
+      CAPSTONE_TEST: ${{ secrets.CAPSTONE_TEST }}
+    run: python -m unittest tests/test_model.py
 
-      - name: Run Flask app tests
-        if: success()
-        run: python -m unittest tests/test_flask_app.py
+  - name: Promote model to production
+    if: success()
+    env:
+      CAPSTONE_TEST: ${{ secrets.CAPSTONE_TEST }}
+    run: python scripts/promote_model.py
+
+  - name: Run Flask app tests
+    if: success()
+    env:
+      CAPSTONE_TEST: ${{ secrets.CAPSTONE_TEST }}
+    run: python -m unittest tests/test_flask_app.py
