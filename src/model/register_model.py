@@ -31,7 +31,7 @@ dagshub.init(
     repo_owner=repo_owner,
     repo_name=repo_name,
     mlflow=True,
-    token=dagshub_token
+
 )
 
  #Set up MLflow tracking URI
