@@ -27,11 +27,14 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: run pipeline
+      - name: Install dependencies
+        run: |
+          pip install dagshub mlflow dvc
+          
+      - name: Run DVC pipeline
         env:
           CAPSTONE_TEST: ${{ secrets.CAPSTONE_TEST }}
-        run: |
-          dvc repro
+        run: dvc repro
 
       - name: Run model tests
         env:
