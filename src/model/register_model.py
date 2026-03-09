@@ -1,7 +1,6 @@
 # register model
 
 import json
-from typing import Set
 import mlflow
 import logging
 from src.logger import logging
@@ -14,10 +13,10 @@ warnings.filterwarnings("ignore")
 
 # Below code block is for production use
 # -------------------------------------------------------------------------------------
-#Set up DagsHub credentials for MLflow tracking
+# Set up DagsHub credentials for MLflow tracking
 dagshub_token = os.getenv("CAPSTONE_TEST")
 if not dagshub_token:
-   raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
+    raise EnvironmentError("CAPSTONE_TEST environment variable is not set")
 
 os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
 os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
@@ -25,24 +24,15 @@ os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 dagshub_url = "https://dagshub.com"
 repo_owner = "Bareddycharitha"
 repo_name = "MLOps-Capstone-Project"
-
-# Initialize Dagshub with token
-dagshub.init(
-    repo_owner=repo_owner,
-    repo_name=repo_name,
-    mlflow=True,
-
-)
-
- #Set up MLflow tracking URI
+# Set up MLflow tracking URI
 mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 # -------------------------------------------------------------------------------------
 
 
 # Below code block is for local use
 # -------------------------------------------------------------------------------------
-mlflow.set_tracking_uri('https://dagshub.com/Bareddycharitha/MLOps-Capstone-Project.mlflow')
-dagshub.init(repo_owner='Bareddycharitha', repo_name='MLOps-Capstone-Project', mlflow=True)
+# mlflow.set_tracking_uri('https://dagshub.com/Bareddycharitha/MLOps-Capstone-Project.mlflow')
+# dagshub.init(repo_owner='Bareddycharitha', repo_name='MLOps-Capstone-Project', mlflow=True)
 # -------------------------------------------------------------------------------------
 
 
@@ -94,4 +84,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
