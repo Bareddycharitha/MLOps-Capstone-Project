@@ -32,8 +32,8 @@ mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 
 # Below code block is for local use
 # -------------------------------------------------------------------------------------
-# mlflow.set_tracking_uri('https://dagshub.com/Bareddycharitha/MLOps-Capstone-Project.mlflow')
-# dagshub.init(repo_owner='Bareddycharitha', repo_name='MLOps-Capstone-Project', mlflow=True)
+mlflow.set_tracking_uri('https://dagshub.com/Bareddycharitha/MLOps-Capstone-Project.mlflow')
+dagshub.init(repo_owner='Bareddycharitha', repo_name='MLOps-Capstone-Project', mlflow=True)
 # -------------------------------------------------------------------------------------
 
 
